@@ -2,7 +2,9 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
-from app.database import db
+from controllers.producto_controller import producto_bp
+from database import db
+
 
 app = Flask(__name__)
 
@@ -10,7 +12,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "tu_clave_secreta_aqui"
 # Configuración de la URL de la documentación OpenAPI
 # Ruta para servir Swagger UI
-SWAGGER_URL = "/api/docs"
+SWAGGER_URL = "/"
 # Ruta de tu archivo OpenAPI/Swagger
 API_URL = "/static/swagger.json"
 
@@ -32,6 +34,8 @@ db.init_app(app)
 # Inicializa la extensión JWTManager
 jwt = JWTManager(app)
 
+app.register_blueprint(producto_bp, url_prefix="/api")
+app.register_blueprint(user_bp, url_prefix="/api")
 
 # Crea las tablas si no existen
 with app.app_context():
