@@ -1,9 +1,9 @@
 import json
 
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
 
-from database import db
+from app.database import db
 
 
 class User(UserMixin, db.Model):
@@ -14,10 +14,10 @@ class User(UserMixin, db.Model):
     password_hash=db.Column(db.String(128), nullable=False)
     roles=db.Column(db.String(50), nullable=False)
 
-    def __init__(self, username,password, roles):
+    def __init__(self, username,password, roles=["user"]):
         self.username=username
         self.password_hash=generate_password_hash(password)
-        self.roles=roles
+        self.roles =json.dumps(roles)
 
 
     def save(self):
@@ -29,5 +29,5 @@ class User(UserMixin, db.Model):
         return User.query.filter_by(username=username).first()
 
     @staticmethod
-    def roles(self, roles):
-        return self.roles=roles
+    def rol(self, roles):
+        return self.roles==roles

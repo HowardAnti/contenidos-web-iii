@@ -2,8 +2,9 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
-from controllers.producto_controller import producto_bp
-from database import db
+from app.controllers.producto_controller import producto_bp
+from app.controllers.user_controller import user_bp
+from app.database import db
 
 
 app = Flask(__name__)
@@ -12,7 +13,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "tu_clave_secreta_aqui"
 # Configuración de la URL de la documentación OpenAPI
 # Ruta para servir Swagger UI
-SWAGGER_URL = "/"
+SWAGGER_URL = "/api/docs"
 # Ruta de tu archivo OpenAPI/Swagger
 API_URL = "/static/swagger.json"
 

@@ -1,35 +1,37 @@
 from flask import Blueprint, jsonify, request
 
-from models.producto_model import Producto
-from utils.decorators import jwt_required, roles_required
-from views.producto_view import render_product_detail, render_product_list
+from app.models.producto_model import Producto
+from app.utils.decorators import jwt_required, roles_required
+from app.views.producto_view import render_product_detail, render_product_list
 
 # Crear un blueprint para el controlador de animales
 producto_bp = Blueprint("producto", __name__)
 
 
 # Ruta para obtener la lista de animales
-@producto_bp.route("/productos", methods=["GET"])
+@producto_bp.route("/products", methods=["GET"])
 @jwt_required
+@roles_required(["admin", "user"])
 def get_productos():
     productos = Producto.get_all()
     return jsonify(render_product_list(productos))
 
 
 # Ruta para obtener un animal específico por su ID
-@producto_bp.route("/producto/<int:id>", methods=["GET"])
+@producto_bp.route("/products/<int:id>", methods=["GET"])
 @jwt_required
+@roles_required(["admin", "user"])
 def get_producto(id):
     producto = Producto.get_by_id(id)
     if producto:
         return jsonify(render_product_detail(producto))
-    return jsonify({"Error": "producto no encontrado"}),404
+    return jsonify({"error": "Producto no encontrado"}),404
 
 
 # Ruta para crear un nuevo animal
-@producto_bp.route("/productos", methods=["POST"])
+@producto_bp.route("/products", methods=["POST"])
 @jwt_required
-@roles_required(roles="admin")
+@roles_required(["admin"])
 def create_productol():
     data = request.json
     name=data.get("name")
@@ -48,9 +50,9 @@ def create_productol():
 
 
 # Ruta para actualizar un animal existente
-@producto_bp.route("/productos/<int:id>", methods=["PUT"])
+@producto_bp.route("/products/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles="admin")
+@roles_required(["admin"])
 def update_producto(id):
     producto = Producto.get_by_id(id)
 
@@ -69,13 +71,13 @@ def update_producto(id):
 
 
 # Ruta para eliminar un animal existente
-@producto_bp.route("/productos/<int:id>", methods=["DELETE"])
+@producto_bp.route("/products/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles="admin")
+@roles_required(["admin"])
 def delete_producto(id):
     producto=Producto.get_by_id(id)
     if not producto:
-        return jsonify({"Error":"producto no encontrado"}), 404
+        return jsonify({"error":"Producto no encontrado"}), 404
     
     producto.delete()
     return "", 204
